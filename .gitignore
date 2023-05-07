@@ -1,0 +1,26 @@
+# Ignore virtual environment
+chatbot_env/
+
+# Ignore config files
+config.py
+
+# Ignore Python compiled files and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore temporary and log files
+*.log
+*.tmp
+*.swp
+*.swo
+*.swn
+
+# Ignore operating system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.idea/
+.vscode/
