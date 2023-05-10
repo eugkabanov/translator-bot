@@ -1,7 +1,7 @@
 import logging
 from config import TELEGRAM_API_TOKEN
 from telegram.ext import ApplicationBuilder
-from handlers import start_handler, restrict_access_handler
+from handlers import start_handler
 
 # Enable logging
 logging.basicConfig(
@@ -13,6 +13,5 @@ if __name__ == "__main__":
 
     # Add handlers to application
     application.add_handler(start_handler)
-    application.add_handler(restrict_access_handler)
 
     application.run_polling()
