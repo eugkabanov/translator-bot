@@ -29,7 +29,7 @@ def translate(text: str, target_language: str):
         },
         {
             "role": "user",
-            "content": f'Translate the following text to {target_language}: "{text}". Give response without quotes.',
+            "content": f'Translate the following text to {target_language}: "{text}". Give in response just translation in quotes.',
         },
     ]
 
@@ -40,8 +40,6 @@ def translate(text: str, target_language: str):
             max_tokens=1000,
         )
 
-        translated_text: str = response["choices"][0]["message"]["content"]
-
         # Log usage
         used_tokens: int = response["usage"]["total_tokens"]
         used_price = calculateUsagePrice(used_tokens)
@@ -49,7 +47,11 @@ def translate(text: str, target_language: str):
             f"Translation success. Used tokens: {used_tokens}. Usage price: {used_price}"
         )
 
-        return translated_text.strip()
+        translated_text: str = response["choices"][0]["message"]["content"]
+        # Remove quotes from translated text
+        formatted_translated_text = translated_text[1:-1]
+
+        return formatted_translated_text
     except Exception as e:
         logger.error(f"Caught translate exception: {e}.")
 
