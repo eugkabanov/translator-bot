@@ -8,6 +8,10 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
+# Store user's language preference here
+# key = chat_id, value = language
+user_language_prefs: dict[int, str] = {}
+
 if __name__ == "__main__":
     application = ApplicationBuilder().token(TELEGRAM_API_TOKEN).build()
 
