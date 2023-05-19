@@ -2,7 +2,7 @@ import openai
 from config import OPENAI_API_KEY
 import logging
 
-from .calculateUsagePrice import calculateUsagePrice
+from .calculate_usage_price import calculate_usage_price
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def translate(text: str, target_language: str):
 
         # Log usage
         used_tokens: int = response["usage"]["total_tokens"]
-        used_price = calculateUsagePrice(used_tokens)
+        used_price = calculate_usage_price(used_tokens)
         logger.info(
             f"Translation success. Used tokens: {used_tokens}. Usage price: {used_price}"
         )

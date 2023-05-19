@@ -1,4 +1,4 @@
-def calculateUsagePrice(used_tokens: int):
+def calculate_usage_price(used_tokens: int):
     """Calculate price for used tokens.
 
     Parameters:
