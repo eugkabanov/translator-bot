@@ -17,6 +17,9 @@ __pycache__/
 *.swo
 *.swn
 
+# Ignore voice files
+audio_files/
+
 # Ignore operating system files
 .DS_Store
 Thumbs.db
