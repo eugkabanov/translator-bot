@@ -4,8 +4,6 @@ import logging
 
 from .calculate_usage_price import calculate_usage_price
 
-logger = logging.getLogger(__name__)
-
 openai.api_key = OPENAI_API_KEY
 
 
@@ -32,6 +30,8 @@ def translate(text: str, target_language: str):
             "content": f'Translate the following text to {target_language}: "{text}". Give in response just translation in quotes.',
         },
     ]
+
+    logger = logging.getLogger(__name__)
 
     try:
         response = openai.ChatCompletion.create(

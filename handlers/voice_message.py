@@ -1,4 +1,5 @@
 import os
+import logging
 from telegram import Update, Voice
 from telegram.ext import ContextTypes
 from utils import convert_audio
@@ -22,7 +23,17 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file.download(ORIGINAL_AUDIO_PATH)
 
     # Convert the ogg file to wav, as Whisper requires wav format
-    convert_audio(ORIGINAL_AUDIO_PATH, CONVERTED_AUDIO_PATH)
+    try:
+        convert_audio(ORIGINAL_AUDIO_PATH, CONVERTED_AUDIO_PATH)
+    except Exception as e:
+        logger = logging.getLogger(__name__)
+
+        logger.error(e)
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="There was an error converting your audio file. Please try again.",
+        )
+        return
 
     # TODO: Get transcription from Whisper API
 
