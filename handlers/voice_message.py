@@ -38,6 +38,14 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     transcript = await create_transcription(CONVERTED_AUDIO_PATH)
+    if transcript is None:
+        context.bot.send_message(
+            chat_id,
+            text="There was an error transcribing your audio file. Please try again.",
+        )
+
+        # Stop the function from continuing
+        return
 
     # Extract the user's language preference. Default to Spanish if not set.
     target_language = user_language_prefs.get(chat_id, "Spanish")
