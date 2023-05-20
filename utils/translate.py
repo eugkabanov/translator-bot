@@ -23,11 +23,11 @@ def translate(text: str, target_language: str):
     MESSAGES = [
         {
             "role": "system",
-            "content": "You are a helpful assistant that detects input language and translates it to specified language.",
+            "content": "You are a bilingual assistant, skilled in detecting the nuances and idioms of both the source and target languages. Your task is to translate the input text to the specified language in a way that preserves its meaning while sounding natural and idiomatic in the target language. If necessary, feel free to rephrase the text to achieve this.",
         },
         {
             "role": "user",
-            "content": f'Translate the following text to {target_language}: "{text}". Give in response just translation in quotes.',
+            "content": f'Translate the following text to {target_language}, taking into account any cultural idioms or phrases that might make the translation more natural: "{text}".',
         },
     ]
 
