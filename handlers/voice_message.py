@@ -20,7 +20,7 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         # Use the getFile method to get a file_path
-        file = context.bot.get_file(file_id)
+        file = await context.bot.get_file(file_id)
 
         # Download the file
         # Whisper requires the file to be in mp3 format
@@ -32,7 +32,7 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             os.makedirs(AUDIO_FILES_PATH)
 
         # Download the file
-        file.download(ORIGINAL_AUDIO_PATH)
+        await file.download_to_drive(ORIGINAL_AUDIO_PATH)
 
         # Convert the ogg file to mp3, as Whisper requires wav format
         converted_path = convert_audio(ORIGINAL_AUDIO_PATH, CONVERTED_AUDIO_PATH)
@@ -73,4 +73,4 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             logger.error(e.strerror)
 
         # Send output to user
-        context.bot.send_message(chat_id, text)
+        await context.bot.send_message(chat_id, text)
