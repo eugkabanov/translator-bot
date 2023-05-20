@@ -1,4 +1,5 @@
 import os
+import logging
 from main import user_language_prefs
 from telegram import Update, Voice
 from telegram.ext import ContextTypes
@@ -8,50 +9,68 @@ AUDIO_FILES_PATH = "audio_files"
 
 
 async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger = logging.getLogger(__name__)
     chat_id = update.effective_chat.id
 
     voice: Voice = update.message.voice
     file_id = voice.file_id
 
-    # Use the getFile method to get a file_path
-    file = context.bot.get_file(file_id)
+    # final text to send to user
+    text = "Something went wrong. Please try again."
 
-    # Download the file
-    # Whisper requires the file to be in wav format
-    ORIGINAL_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}.ogg"
-    CONVERTED_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}.wav"
+    try:
+        # Use the getFile method to get a file_path
+        file = context.bot.get_file(file_id)
 
-    # Create the audio_files directory if it doesn't exist
-    if not os.path.exists(AUDIO_FILES_PATH):
-        os.makedirs(AUDIO_FILES_PATH)
-    file.download(ORIGINAL_AUDIO_PATH)
+        # Download the file
+        # Whisper requires the file to be in mp3 format
+        ORIGINAL_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}.ogg"
+        CONVERTED_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}.mp3"
 
-    # Convert the ogg file to wav, as Whisper requires wav format
-    is_converted = convert_audio(ORIGINAL_AUDIO_PATH, CONVERTED_AUDIO_PATH) is not None
-    if is_converted is False:
-        context.bot.send_message(
-            chat_id,
-            text="There was an error converting your audio file. Please try again.",
-        )
+        # Create the audio_files directory if it doesn't exist
+        if not os.path.exists(AUDIO_FILES_PATH):
+            os.makedirs(AUDIO_FILES_PATH)
 
-        # Stop the function from continuing
-        return
+        # Download the file
+        file.download(ORIGINAL_AUDIO_PATH)
 
-    # Create a transcription
-    transcript = await create_transcription(CONVERTED_AUDIO_PATH)
-    if transcript is None:
-        context.bot.send_message(
-            chat_id,
-            text="There was an error transcribing your audio file. Please try again.",
-        )
+        # Convert the ogg file to mp3, as Whisper requires wav format
+        converted_path = convert_audio(ORIGINAL_AUDIO_PATH, CONVERTED_AUDIO_PATH)
 
-        # Stop the function from continuing
-        return
+        if converted_path is None:
+            # Stop the function from continuing
+            raise RuntimeError(
+                "There was an error converting your audio file. Please try again."
+            )
 
-    # Extract the user's language preference. Default to Spanish if not set.
-    target_language = user_language_prefs.get(chat_id, "Spanish")
+        # Create a transcription
+        transcript = create_transcription(CONVERTED_AUDIO_PATH)
 
-    # Translate the text
-    translated_text = translate(transcript, target_language)
+        if transcript is None:
+            # Stop the function from continuing
+            raise RuntimeError(
+                "There was an error transcribing your audio file. Please try again.",
+            )
 
-    context.bot.send_message(chat_id, text=translated_text)
+        # Extract the user's language preference. Default to Spanish if not set.
+        target_language = user_language_prefs.get(chat_id, "Spanish")
+
+        # Translate the text
+        text = translate(transcript, target_language)
+
+    except RuntimeError as e:
+        text = str(e)
+
+    except OSError as e:
+        logger.error(e.strerror)
+
+    finally:
+        try:
+            # Delete the audio files
+            os.remove(ORIGINAL_AUDIO_PATH)
+            os.remove(CONVERTED_AUDIO_PATH)
+        except OSError as e:
+            logger.error(e.strerror)
+
+        # Send output to user
+        context.bot.send_message(chat_id, text)
