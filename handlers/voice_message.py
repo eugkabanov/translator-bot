@@ -27,16 +27,14 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file.download(ORIGINAL_AUDIO_PATH)
 
     # Convert the ogg file to wav, as Whisper requires wav format
-    try:
-        convert_audio(ORIGINAL_AUDIO_PATH, CONVERTED_AUDIO_PATH)
-    except Exception as e:
-        logger = logging.getLogger(__name__)
-
-        logger.error(e)
+    is_converted = convert_audio(ORIGINAL_AUDIO_PATH, CONVERTED_AUDIO_PATH) is not None
+    if is_converted is False:
         context.bot.send_message(
             chat_id,
             text="There was an error converting your audio file. Please try again.",
         )
+
+        # Stop the function from continuing
         return
 
     transcript = await create_transcription(CONVERTED_AUDIO_PATH)
