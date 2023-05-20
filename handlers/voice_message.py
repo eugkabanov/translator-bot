@@ -73,4 +73,6 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             logger.error(e.strerror)
 
         # Send output to user
-        await context.bot.send_message(chat_id, text)
+        await context.bot.send_message(
+            chat_id, f"From audio: {transcript} \n\nTranslated: \n\n{text}"
+        )
