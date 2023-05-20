@@ -1,5 +1,4 @@
 import os
-import logging
 from main import user_language_prefs
 from telegram import Update, Voice
 from telegram.ext import ContextTypes
@@ -22,6 +21,7 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ORIGINAL_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}.ogg"
     CONVERTED_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}.wav"
 
+    # Create the audio_files directory if it doesn't exist
     if not os.path.exists(AUDIO_FILES_PATH):
         os.makedirs(AUDIO_FILES_PATH)
     file.download(ORIGINAL_AUDIO_PATH)
@@ -37,6 +37,7 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Stop the function from continuing
         return
 
+    # Create a transcription
     transcript = await create_transcription(CONVERTED_AUDIO_PATH)
     if transcript is None:
         context.bot.send_message(
