@@ -1,7 +1,8 @@
 import openai
-from config import OPENAI_API_KEY
 import logging
+import re
 
+from config import OPENAI_API_KEY
 from .calculate_usage_price import calculate_usage_price
 
 openai.api_key = OPENAI_API_KEY
@@ -51,8 +52,25 @@ def translate(text: str, target_language: str):
         )
 
         translated_text: str = response["choices"][0]["message"]["content"]
-        # Remove quotes from translated text
-        formatted_translated_text = translated_text
+        """ Example response:
+        TRANSLATION: "Hi, I'm Bob."
+        CAN BE CHANGED TO: "Hello, my name is Bob."
+        FINAL RESULT: "Hello, my name is Bob."
+        """
+
+        # Extract only final translated text from response
+        # define the pattern to search for, following 'FINAL RESULT:'
+        pattern = r'FINAL RESULT: "(.*?)"'
+
+        # find the pattern in the translated text
+        match = re.search(pattern, translated_text)
+
+        # extract the matched group (the text inside the quotes)
+        if match:
+            formatted_translated_text = match.group(1)
+        else:
+            # fallback to the whole translated text
+            formatted_translated_text = translated_text
 
         return formatted_translated_text
     except Exception as e:
