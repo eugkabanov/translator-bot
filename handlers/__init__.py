@@ -15,3 +15,4 @@ language_select_handler = CallbackQueryHandler(withWhiteList(language_select))
 
 message_handler = MessageHandler(filters.TEXT, withWhiteList(message))
 voice_message_handler = MessageHandler(filters.VOICE, withWhiteList(audio_message))
+audio_message_handler = MessageHandler(filters.AUDIO, withWhiteList(audio_message))

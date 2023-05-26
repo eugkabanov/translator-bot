@@ -17,6 +17,11 @@ async def audio_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if isinstance(message.voice, Voice):
         file_id = message.voice.file_id
         original_extension = ".ogg"
+    elif isinstance(message.audio, Audio):
+        file_id = message.audio.file_id
+
+        file_name, file_extension = os.path.splitext(message.audio.file_name)
+        original_extension = file_extension
     else:
         return
 

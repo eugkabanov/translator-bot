@@ -21,5 +21,6 @@ if __name__ == "__main__":
     application.add_handler(handlers.language_select_handler)
     application.add_handler(handlers.message_handler)
     application.add_handler(handlers.voice_message_handler)
+    application.add_handler(handlers.audio_message_handler)
 
     application.run_polling()
