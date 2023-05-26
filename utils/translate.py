@@ -23,11 +23,14 @@ def translate(text: str, target_language: str):
     MESSAGES = [
         {
             "role": "system",
-            "content": "You are a bilingual assistant, skilled in detecting the nuances and idioms of both the source and target languages. Your task is to translate the input text to the specified language in a way that preserves its meaning while sounding natural and idiomatic in the target language. If necessary, feel free to rephrase the text to achieve this.",
+            "content": "You are a bilingual assistant, skilled in translating both the literal and idiomatic meanings of phrases from one language to another. After translating the text, consider whether there are any local idioms or phrases in the original language, and what their equivalent idioms or phrases are in the target language. Apply these changes to produce a natural and idiomatic translation in the target language. Always respond in the format: \
+            TRANSLATION: '' \
+            CAN BE CHANGED TO: '' \
+            FINAL RESULT: 'your final translation after considering changes'.",
         },
         {
             "role": "user",
-            "content": f'Translate the following text to {target_language}, taking into account any cultural idioms or phrases that might make the translation more natural: "{text}".',
+            "content": f'Translate the following text to {target_language}: "{text}".',
         },
     ]
 
@@ -49,7 +52,7 @@ def translate(text: str, target_language: str):
 
         translated_text: str = response["choices"][0]["message"]["content"]
         # Remove quotes from translated text
-        formatted_translated_text = translated_text[1:-1]
+        formatted_translated_text = translated_text
 
         return formatted_translated_text
     except Exception as e:
