@@ -1,19 +1,24 @@
 import os
 import logging
 from main import user_language_prefs
-from telegram import Update, Voice
+from telegram import Update, Voice, Audio
 from telegram.ext import ContextTypes
 from utils import convert_audio, create_transcription, translate
 
 AUDIO_FILES_PATH = "audio_files"
 
 
-async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def audio_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger = logging.getLogger(__name__)
     chat_id = update.effective_chat.id
 
-    voice: Voice = update.message.voice
-    file_id = voice.file_id
+    message = update.message
+
+    if isinstance(message.voice, Voice):
+        file_id = message.voice.file_id
+        original_extension = ".ogg"
+    else:
+        return
 
     # final text to send to user
     text = "Something went wrong. Please try again."
@@ -24,7 +29,7 @@ async def voice_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # Download the file
         # Whisper requires the file to be in mp3 format
-        ORIGINAL_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}.ogg"
+        ORIGINAL_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}{original_extension}"
         CONVERTED_AUDIO_PATH = f"{AUDIO_FILES_PATH}/{file_id}.mp3"
 
         # Create the audio_files directory if it doesn't exist
