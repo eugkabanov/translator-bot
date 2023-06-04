@@ -1,8 +1,7 @@
 import openai
-import logging
-import re
-
 from config import OPENAI_API_KEY
+import logging
+
 from .calculate_usage_price import calculate_usage_price
 
 openai.api_key = OPENAI_API_KEY
@@ -24,14 +23,11 @@ def translate(text: str, target_language: str):
     MESSAGES = [
         {
             "role": "system",
-            "content": "You are a bilingual assistant, skilled in translating both the literal and idiomatic meanings of phrases from one language to another. After translating the text, consider whether there are any local idioms or phrases in the original language, and what their equivalent idioms or phrases are in the target language. Apply these changes to produce a natural and idiomatic translation in the target language. Always respond in the format: \
-            TRANSLATION: '' \
-            CAN BE CHANGED TO: '' \
-            FINAL RESULT: 'your final translation after considering changes'.",
+            "content": "You are a helpful assistant that detects input language and translates it to specified language.",
         },
         {
             "role": "user",
-            "content": f'Translate the following text to {target_language}: "{text}".',
+            "content": f'Translate the following text to {target_language}: "{text}". Give in response just translation in quotes.',
         },
     ]
 
@@ -52,25 +48,8 @@ def translate(text: str, target_language: str):
         )
 
         translated_text: str = response["choices"][0]["message"]["content"]
-        """ Example response:
-        TRANSLATION: "Hi, I'm Bob."
-        CAN BE CHANGED TO: "Hello, my name is Bob."
-        FINAL RESULT: "Hello, my name is Bob."
-        """
-
-        # Extract only final translated text from response
-        # define the pattern to search for, following 'FINAL RESULT:'
-        pattern = r'FINAL RESULT: "(.*?)"'
-
-        # find the pattern in the translated text
-        match = re.search(pattern, translated_text)
-
-        # extract the matched group (the text inside the quotes)
-        if match:
-            formatted_translated_text = match.group(1)
-        else:
-            # fallback to the whole translated text
-            formatted_translated_text = translated_text
+        # Remove quotes from translated text
+        formatted_translated_text = translated_text[1:-1]
 
         return formatted_translated_text
     except Exception as e:
