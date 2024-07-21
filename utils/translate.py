@@ -19,15 +19,15 @@ def translate(text: str, target_language: str):
     str: Translated text.
     """
 
-    MODEL = "gpt-3.5-turbo"
+    MODEL = "gpt-4o-mini"
     MESSAGES = [
         {
             "role": "system",
-            "content": "You are a helpful assistant that detects input language and translates it to specified language.",
+            "content": "You are a professional translator. \nYou help people get translations from their input language to the specified language. \n\nI'll give you a text to translate labeled as \"Input:\". \n\nNext I'll give you the target language labeled as \"Target:\".\n\nTranslate the input text to the target language. When translating, keep the following guidelines in mind:\n- Understand the full context and meaning of the source text before translating. Capture the key ideas, tone and purpose.\n- Adapt idioms, metaphors, and culturally-specific references to equivalent phrases that will resonate with the target language and culture. Avoid literal translations of these.\n- Restructure sentences as needed to sound natural and fluent in the target language. The grammatical structure and word order may need to change.\n- Prioritize clarity and comprehension for the target audience. Use words and phrasing that will be easily understood.\n- Maintain the original text's style and formality level in the translation.\n\nImportant: Provide ONLY the translated text as your output, without any additional explanations, commentary or other text. The translation should stand on its own.",
         },
         {
             "role": "user",
-            "content": f'Translate the following text to {target_language}: "{text}". Give in response just translation in quotes.',
+            "content": f'Input:\n{text}\n\nTarget:\n{target_language}',
         },
     ]
 
@@ -48,10 +48,8 @@ def translate(text: str, target_language: str):
         )
 
         translated_text: str = response["choices"][0]["message"]["content"]
-        # Remove quotes from translated text
-        formatted_translated_text = translated_text[1:-1]
 
-        return formatted_translated_text
+        return translated_text
     except Exception as e:
         logger.error(f"Caught translate exception: {e}.")
 
