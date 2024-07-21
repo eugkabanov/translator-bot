@@ -18,7 +18,8 @@ def withWhiteList(handler):
         if user_id not in allowed_users and username not in allowed_users:
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text="Sorry, you don't have access to this bot.",
+                text=f"Sorry, you don't have access to this bot\. Tell your used ID to the bot owner to get access\.\n\nYour user ID: `{user_id}`",
+                parse_mode='MarkdownV2'
             )
             logger.warning(
                 f"Unauthorized access attempt by user: {user_id} / {username}"
